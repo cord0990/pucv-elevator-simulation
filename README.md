@@ -160,7 +160,7 @@ Conceptos aplicados: programación concurrente, manejo de hebras, sincronizació
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=2e4a7a&height=2&section=header" />
 
-### ▎AUTORES
+### ▎AUTOR
 
 <div align="center">
 
