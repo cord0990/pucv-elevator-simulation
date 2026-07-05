@@ -154,7 +154,7 @@ py -3.11 main.py
 
 Proyecto desarrollado para el curso **Hardware y Sistemas Operativos** -INF2322- en la [Pontificia Universidad Católica de Valparaíso (PUCV)](https://www.pucv.cl), 1er semestre de Ingeniería en Informática durante el 2024.
 
-Conceptos aplicados: programación concurrente, manejo de hebras, sincronización con semáforos, simulación gráfica en tiempo real.
+Conceptos aplicados: programación concurrente, manejo de hebras, sincronización con semáforos, simulación gráfica en tiempo real mediante pyGame.
 
 <br/>
 
