@@ -1,0 +1,367 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="800" height="220">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="building" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#21262d"/>
+      <stop offset="100%" stop-color="#30363d"/>
+    </linearGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#1a1f26"/>
+    </linearGradient>
+    <linearGradient id="cabGray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8b949e"/>
+      <stop offset="100%" stop-color="#6e7681"/>
+    </linearGradient>
+
+    <style>
+      /* ==============================================================
+         ANIMATION CYCLE (14s) — COMPLETE STORY PER ELEVATOR
+         
+         Each elevator does ONE full trip:
+         1. Pick up 2 passengers at Piso 1 (green dots disappear, appear in cab)
+         2. Ride up to destination floor
+         3. Drop passengers (appear YELLOW on floor, disappear from cab)
+         4. Passengers turn GREEN after ~1s (ready to descend)
+         5. Elevator picks them back up (green dots disappear, reappear in cab)
+         6. Ride back down to Piso 1
+         7. Drop passengers at ground (disappear from cab)
+         8. Ground dots reappear later (new passengers arrive for next loop)
+         
+         E1 → Piso 4 | E2 → Piso 3 | E3 → Piso 5
+         ============================================================== */
+
+      /* ELEVATOR MOVEMENT (ease-in-out for smooth motion)
+         ------------------------------------------------- */
+
+      /* E1: Ground → Piso 4 → Ground */
+      @keyframes elevator1 {
+        0%, 6%    { transform: translateY(0px); }
+        20%       { transform: translateY(-105px); }
+        44%       { transform: translateY(-105px); }
+        58%       { transform: translateY(0px); }
+        100%      { transform: translateY(0px); }
+      }
+
+      /* E2: Ground → Piso 3 → Ground */
+      @keyframes elevator2 {
+        0%, 10%   { transform: translateY(0px); }
+        24%       { transform: translateY(-70px); }
+        48%       { transform: translateY(-70px); }
+        62%       { transform: translateY(0px); }
+        100%      { transform: translateY(0px); }
+      }
+
+      /* E3: Ground → Piso 5 → Ground */
+      @keyframes elevator3 {
+        0%, 14%   { transform: translateY(0px); }
+        30%       { transform: translateY(-140px); }
+        54%       { transform: translateY(-140px); }
+        70%       { transform: translateY(0px); }
+        100%      { transform: translateY(0px); }
+      }
+
+      /* GROUND FLOOR DOTS (linear for instant on/off)
+         Disappear when elevator picks up, reappear for next loop
+         ------------------------------------------------------- */
+
+      /* Batch 1: disappears at 6% (E1 departs), reappears at 84% */
+      @keyframes groundBatch1 {
+        0%, 4%   { opacity: 1; }
+        6%       { opacity: 0; }
+        82%      { opacity: 0; }
+        84%      { opacity: 1; }
+        100%     { opacity: 1; }
+      }
+
+      /* Batch 2: disappears at 10% (E2 departs), reappears at 88% */
+      @keyframes groundBatch2 {
+        0%, 8%   { opacity: 1; }
+        10%      { opacity: 0; }
+        86%      { opacity: 0; }
+        88%      { opacity: 1; }
+        100%     { opacity: 1; }
+      }
+
+      /* Batch 3: disappears at 14% (E3 departs), reappears at 90% */
+      @keyframes groundBatch3 {
+        0%, 12%  { opacity: 1; }
+        14%      { opacity: 0; }
+        88%      { opacity: 0; }
+        90%      { opacity: 1; }
+        100%     { opacity: 1; }
+      }
+
+      /* ELEVATOR PASSENGERS (linear — both passengers same timing)
+         Visible during ride UP and ride DOWN, hidden while on floor
+         ---------------------------------------------------------- */
+
+      /* E1 passengers: up 6-20%, on floor 20-42%, down 42-58% */
+      @keyframes ep1 {
+        0%, 5%   { opacity: 0; }
+        6%       { opacity: 1; }
+        19%      { opacity: 1; }
+        20%      { opacity: 0; }
+        41%      { opacity: 0; }
+        42%      { opacity: 1; }
+        57%      { opacity: 1; }
+        58%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      /* E2 passengers: up 10-24%, on floor 24-46%, down 46-62% */
+      @keyframes ep2 {
+        0%, 9%   { opacity: 0; }
+        10%      { opacity: 1; }
+        23%      { opacity: 1; }
+        24%      { opacity: 0; }
+        45%      { opacity: 0; }
+        46%      { opacity: 1; }
+        61%      { opacity: 1; }
+        62%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      /* E3 passengers: up 14-30%, on floor 30-50%, down 50-70% */
+      @keyframes ep3 {
+        0%, 13%  { opacity: 0; }
+        14%      { opacity: 1; }
+        29%      { opacity: 1; }
+        30%      { opacity: 0; }
+        49%      { opacity: 0; }
+        50%      { opacity: 1; }
+        69%      { opacity: 1; }
+        70%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      /* UPPER FLOOR DOTS — yellow (just arrived) → green (ready)
+         Appear when dropped off, disappear when picked back up
+         7% ≈ 1 second yellow before turning green
+         -------------------------------------------------------- */
+
+      /* Piso 4: E1 drops at 20%, picks back up at 42% */
+      @keyframes udP4 {
+        0%, 19%  { opacity: 0; fill: #e3b341; }
+        20%      { opacity: 1; fill: #e3b341; }
+        27%      { opacity: 1; fill: #e3b341; }
+        28%      { opacity: 1; fill: #3fb950; }
+        41%      { opacity: 1; fill: #3fb950; }
+        42%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      /* Piso 3: E2 drops at 24%, picks back up at 46% */
+      @keyframes udP3 {
+        0%, 23%  { opacity: 0; fill: #e3b341; }
+        24%      { opacity: 1; fill: #e3b341; }
+        31%      { opacity: 1; fill: #e3b341; }
+        32%      { opacity: 1; fill: #3fb950; }
+        45%      { opacity: 1; fill: #3fb950; }
+        46%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      /* Piso 5: E3 drops at 30%, picks back up at 50% */
+      @keyframes udP5 {
+        0%, 29%  { opacity: 0; fill: #e3b341; }
+        30%      { opacity: 1; fill: #e3b341; }
+        37%      { opacity: 1; fill: #e3b341; }
+        38%      { opacity: 1; fill: #3fb950; }
+        49%      { opacity: 1; fill: #3fb950; }
+        50%      { opacity: 0; }
+        100%     { opacity: 0; }
+      }
+
+      @keyframes flicker {
+        0%, 100% { opacity: 0.15; }
+        50%      { opacity: 0.4; }
+      }
+      @keyframes titleGlow {
+        0%, 100% { fill-opacity: 0.9; }
+        50%      { fill-opacity: 1; }
+      }
+
+      /* ANIMATION CLASSES
+         Movement: ease-in-out | Opacity/fill: linear
+         --------------------------------------------- */
+      .e1   { animation: elevator1 14s ease-in-out infinite; }
+      .e2   { animation: elevator2 14s ease-in-out infinite; }
+      .e3   { animation: elevator3 14s ease-in-out infinite; }
+      .gb1  { animation: groundBatch1 14s linear infinite; }
+      .gb2  { animation: groundBatch2 14s linear infinite; }
+      .gb3  { animation: groundBatch3 14s linear infinite; }
+      .ep1  { animation: ep1 14s linear infinite; }
+      .ep2  { animation: ep2 14s linear infinite; }
+      .ep3  { animation: ep3 14s linear infinite; }
+      .udP4 { animation: udP4 14s linear infinite; }
+      .udP3 { animation: udP3 14s linear infinite; }
+      .udP5 { animation: udP5 14s linear infinite; }
+      .fl   { animation: flicker 4s ease-in-out infinite; }
+      .title { animation: titleGlow 4s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="220" fill="url(#bg)" rx="6"/>
+
+  <!-- Grid lines -->
+  <g opacity="0.04" stroke="#58a6ff">
+    <line x1="0" y1="40" x2="800" y2="40"/>
+    <line x1="0" y1="80" x2="800" y2="80"/>
+    <line x1="0" y1="120" x2="800" y2="120"/>
+    <line x1="0" y1="160" x2="800" y2="160"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+  </g>
+
+  <!-- Building structure -->
+  <rect x="15" y="20" width="270" height="190" fill="url(#building)" rx="3" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Floor lines -->
+  <g stroke="#484f58" stroke-width="0.5" opacity="0.6">
+    <line x1="18" y1="55" x2="282" y2="55"/>
+    <line x1="18" y1="90" x2="282" y2="90"/>
+    <line x1="18" y1="125" x2="282" y2="125"/>
+    <line x1="18" y1="160" x2="282" y2="160"/>
+  </g>
+
+  <!-- Floor labels -->
+  <g fill="#c9d1d9" font-family="monospace" font-size="8">
+    <text x="20" y="50">Piso 5</text>
+    <text x="20" y="85">Piso 4</text>
+    <text x="20" y="120">Piso 3</text>
+    <text x="20" y="155">Piso 2</text>
+    <text x="20" y="190">Piso 1</text>
+  </g>
+
+  <!-- Elevator shafts -->
+  <rect x="65" y="25" width="32" height="180" fill="url(#shaft)" rx="1"/>
+  <rect x="110" y="25" width="32" height="180" fill="url(#shaft)" rx="1"/>
+  <rect x="155" y="25" width="32" height="180" fill="url(#shaft)" rx="1"/>
+
+  <!-- Shaft borders -->
+  <g stroke="#30363d" stroke-width="0.5" fill="none">
+    <rect x="65" y="25" width="32" height="180" rx="1"/>
+    <rect x="110" y="25" width="32" height="180" rx="1"/>
+    <rect x="155" y="25" width="32" height="180" rx="1"/>
+  </g>
+
+  <!-- Cables (dur=14s, keyTimes match elevator CSS, same ease-in-out curve)
+       CSS ease-in-out = cubic-bezier(0.42, 0, 0.58, 1) -->
+
+  <!-- Cable 1: E1 → Piso 4 (y2: 175=ground, 70=Piso4) -->
+  <line x1="81" y1="25" x2="81" y2="175" stroke="#484f58" stroke-width="1" opacity="0.4">
+    <animate attributeName="y2" values="175;175;70;70;175;175" dur="14s" repeatCount="indefinite" keyTimes="0;0.06;0.20;0.44;0.58;1" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </line>
+
+  <!-- Cable 2: E2 → Piso 3 (y2: 175=ground, 105=Piso3) -->
+  <line x1="126" y1="25" x2="126" y2="175" stroke="#484f58" stroke-width="1" opacity="0.4">
+    <animate attributeName="y2" values="175;175;105;105;175;175" dur="14s" repeatCount="indefinite" keyTimes="0;0.10;0.24;0.48;0.62;1" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </line>
+
+  <!-- Cable 3: E3 → Piso 5 (y2: 175=ground, 35=Piso5) -->
+  <line x1="171" y1="25" x2="171" y2="175" stroke="#484f58" stroke-width="1" opacity="0.4">
+    <animate attributeName="y2" values="175;175;35;35;175;175" dur="14s" repeatCount="indefinite" keyTimes="0;0.14;0.30;0.54;0.70;1" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
+  </line>
+
+  <!-- ============================================ -->
+  <!-- GROUND FLOOR PASSENGERS (Piso 1)             -->
+  <!-- 6 green dots, 2 per elevator                 -->
+  <!-- ============================================ -->
+  <g class="gb1">
+    <circle cx="198" cy="195" r="3" fill="#3fb950"/>
+    <circle cx="208" cy="195" r="3" fill="#3fb950"/>
+  </g>
+  <g class="gb2">
+    <circle cx="218" cy="195" r="3" fill="#3fb950"/>
+    <circle cx="228" cy="195" r="3" fill="#3fb950"/>
+  </g>
+  <g class="gb3">
+    <circle cx="238" cy="195" r="3" fill="#3fb950"/>
+    <circle cx="248" cy="195" r="3" fill="#3fb950"/>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ELEVATOR CABS + 2 PASSENGERS EACH            -->
+  <!-- Both passengers use SAME animation class     -->
+  <!-- r=3 for clear visibility                     -->
+  <!-- ============================================ -->
+
+  <!-- Cab 1 -->
+  <g class="e1">
+    <rect x="67" y="173" width="28" height="24" fill="url(#cabGray)" rx="2"/>
+    <line x1="81" y1="175" x2="81" y2="195" stroke="#1a1f26" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="74" cy="184" r="3" fill="#3fb950" class="ep1"/>
+    <circle cx="88" cy="184" r="3" fill="#3fb950" class="ep1"/>
+  </g>
+
+  <!-- Cab 2 -->
+  <g class="e2">
+    <rect x="112" y="173" width="28" height="24" fill="url(#cabGray)" rx="2"/>
+    <line x1="126" y1="175" x2="126" y2="195" stroke="#1a1f26" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="119" cy="184" r="3" fill="#3fb950" class="ep2"/>
+    <circle cx="133" cy="184" r="3" fill="#3fb950" class="ep2"/>
+  </g>
+
+  <!-- Cab 3 -->
+  <g class="e3">
+    <rect x="157" y="173" width="28" height="24" fill="url(#cabGray)" rx="2"/>
+    <line x1="171" y1="175" x2="171" y2="195" stroke="#1a1f26" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="164" cy="184" r="3" fill="#3fb950" class="ep3"/>
+    <circle cx="178" cy="184" r="3" fill="#3fb950" class="ep3"/>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- UPPER FLOOR DOTS (yellow → green)            -->
+  <!-- Appear when dropped off, disappear when      -->
+  <!-- elevator picks them back up                  -->
+  <!-- ============================================ -->
+
+  <!-- Piso 4: E1 drops at 20%, picks up at 42% -->
+  <circle cx="198" cy="81" r="3" class="udP4"/>
+  <circle cx="210" cy="81" r="3" class="udP4"/>
+
+  <!-- Piso 3: E2 drops at 24%, picks up at 46% -->
+  <circle cx="198" cy="116" r="3" class="udP3"/>
+  <circle cx="210" cy="116" r="3" class="udP3"/>
+
+  <!-- Piso 5: E3 drops at 30%, picks up at 50% -->
+  <circle cx="198" cy="46" r="3" class="udP5"/>
+  <circle cx="210" cy="46" r="3" class="udP5"/>
+
+  <!-- Indicator lights -->
+  <g class="fl">
+    <circle cx="63" cy="28" r="1.5" fill="#8b949e"/>
+    <circle cx="108" cy="28" r="1.5" fill="#8b949e"/>
+    <circle cx="153" cy="28" r="1.5" fill="#8b949e"/>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- TITLE AND TEXT (right side)                  -->
+  <!-- ============================================ -->
+  <text x="555" y="80" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="#e6edf3" text-anchor="middle" class="title">
+    Simulador de Ascensores
+  </text>
+
+  <text x="555" y="112" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle">
+    Hardware y Sistemas Operativos (INF2322) - PUCV
+  </text>
+
+  <!-- Tech tags (colorful) -->
+  <g font-family="monospace" font-size="10">
+    <rect x="450" y="132" width="55" height="20" rx="10" fill="#1f6feb" opacity="0.25"/>
+    <text x="477" y="146" fill="#58a6ff" text-anchor="middle">Python</text>
+
+    <rect x="515" y="132" width="60" height="20" rx="10" fill="#238636" opacity="0.25"/>
+    <text x="545" y="146" fill="#7ee787" text-anchor="middle">Pygame</text>
+
+    <rect x="585" y="132" width="72" height="20" rx="10" fill="#6e40c9" opacity="0.25"/>
+    <text x="621" y="146" fill="#d2a8ff" text-anchor="middle">Threading</text>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="216" width="800" height="4" fill="#6e7681" opacity="0.4" rx="0"/>
+</svg>
