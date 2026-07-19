@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0,1a1a2e,2e4a7a&height=200&section=header&text=Elevator%20Simulation&fontSize=52&fontColor=ffffff&fontAlignY=38&desc=Sistema%20de%20ascensores%20concurrente%20con%20visualizaci%C3%B3n%20en%20tiempo%20real%20con%20Pygame&descAlignY=58&descSize=16" />
+<img src="assets/elevator_header.svg" alt="Simulador de Ascensores" width="800"/>
 
 <br/>
 
@@ -81,12 +81,13 @@ Cada ascensor se ejecuta en su propia hebra y coordina el acceso a los recursos 
 
 ### ▎ESTRUCTURA DEL PROYECTO
 
-```
+```text
 elevator-simulation/
 ├── main.py                  # Lógica principal de la simulación
 ├── datosascensores.txt      # Archivo de configuración de entrada
-├── .gitignore
-├── LICENSE
+├── assets/
+│   └── elevator_header.svg  # Animación del banner (SVG)
+├── screenshots/             # Capturas de la aplicación
 └── README.md
 ```
 
@@ -96,9 +97,9 @@ elevator-simulation/
 
 ### ▎ARCHIVO DE CONFIGURACIÓN
 
-Edita `datosascensores.txt` con los parámetros de tu simulación:
+Todos los parámetros de la simulación se cargan y ajustan automáticamente desde el archivo externo `datosascensores.txt`. Solo debes editar los valores en este archivo y el código de la simulación funcionará adaptándose a tu configuración:
 
-```
+```text
 2       ← Cantidad de ascensores
 5       ← Capacidad del ascensor (máximo de pasajeros)
 20      ← Total de personas
@@ -152,7 +153,7 @@ py -3.11 main.py
 
 ### ▎CONTEXTO ACADÉMICO
 
-Proyecto desarrollado para el curso **Hardware y Sistemas Operativos** -INF2322- en la [Pontificia Universidad Católica de Valparaíso (PUCV)](https://www.pucv.cl), 1er semestre de Ingeniería en Informática durante el 2024.
+Proyecto desarrollado para el curso **Hardware y Sistemas Operativos -INF2322-** en la [Pontificia Universidad Católica de Valparaíso (PUCV)](https://www.pucv.cl), 1er semestre de Ingeniería en Informática durante el 2024.
 
 Conceptos aplicados: programación concurrente, manejo de hebras, sincronización con semáforos, simulación gráfica en tiempo real mediante pyGame.
 
